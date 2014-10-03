@@ -1,0 +1,9 @@
+{
+    "description": "twitter",
+    "directories": {
+        "lib": "."
+    },
+    "main": "twitter",
+    "name": "twitter",
+    "version": “1.0.1”
+}
