@@ -1,9 +1,9 @@
 {
-    "description": "twitter",
+    "description": "jp.coe.mod.twitter",
     "directories": {
         "lib": "."
     },
-    "main": "twitter",
-    "name": "twitter",
-    "version": “1.0.1”
+    "main": "jp.coe.mod.twitter",
+    "name": "jp.coe.mod.twitter",
+    "version":"0.0.1"
 }
