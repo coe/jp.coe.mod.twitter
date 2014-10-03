@@ -1,5 +1,5 @@
 /*
- * @require jsOAuth-1.3.3
+ * @require jp.coe.mod.jsOAuth-1.3.3
  */
 var exports = exports || this;
 function compVersions(strV1, strV2) {
@@ -25,7 +25,7 @@ function compVersions(strV1, strV2) {
 };
 exports.Twitter = (function(global) {
 	var K = function() {
-	}, isAndroid = Ti.Platform.osname === "android", jsOAuth = require('jsOAuth-1.3.3');
+	}, isAndroid = Ti.Platform.osname === "android", jsOAuth = require('jp.coe.mod.jsOAuth-1.3.3');
 
 	/**
 	 * Twitter constructor function
