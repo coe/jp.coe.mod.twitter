@@ -6,12 +6,12 @@ version: 1.0.1
 description: twitter
 author: no
 license: Appcelerator Commercial License
-copyright: Copyright (c) 2011-2014 by Appcelerator,  Inc.
+copyright: Copyright (c) 2011-2014 by th.
 
 
 # these should not be edited
-name: twitter
-moduleid: twitter
+name: jp.coe.mod.twitter
+moduleid: jp.coe.mod.twitter
 guid: 1056b5d2-2bb5-4339-b930-297637aeec4e
 platform: commonjs
 minsdk: 2.1.0
