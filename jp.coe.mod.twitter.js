@@ -38,7 +38,7 @@ exports.Twitter = (function(global) {
 	 * Can be used with or without `new` keyword.
 	 *
 	 * @constructor
-	 * @requires jsOAuth: http://github.com/bytespider/jsOAuth
+	 * @requires jsOAuth: jp.coe.mod.jsOAuth-1.3.3.js
 	 * @param options {Object} Configuration object
 	 * @param options.consumerKey {String} Application consumer key
 	 * @param options.consumerSecret {String} Application consumer secret
