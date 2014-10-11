@@ -26,6 +26,8 @@ function compVersions(strV1, strV2) {
 exports.Twitter = (function(global) {
 	var K = function() {
 	}, isAndroid = Ti.Platform.osname === "android", jsOAuth = require('jp.coe.mod.jsOAuth-1.3.3');
+	var PROP_ACCESSTOKEN_KEY = "twitterAccessTokenKey";
+	var PROP_ACCESSTOKENSECRET_KEY = "twitterAccessTokenSecret";
 
 	/**
 	 * Twitter constructor function
@@ -64,8 +66,8 @@ exports.Twitter = (function(global) {
 		self.consumerKey = options.consumerKey;
 		self.consumerSecret = options.consumerSecret;
 		self.authorizeUrl = "https://api.twitter.com/oauth/authorize";
-		self.accessTokenKey = options.accessTokenKey;
-		self.accessTokenSecret = options.accessTokenSecret;
+		self.accessTokenKey = options.accessTokenKey = Ti.App.Properties.getString(PROP_ACCESSTOKEN_KEY, '');
+		self.accessTokenSecret = options.accessTokenSecret = Ti.App.Properties.getString(PROP_ACCESSTOKENSECRET_KEY, '');
 		self.authorized = false;
 		self.listeners = {};
 
@@ -181,6 +183,8 @@ exports.Twitter = (function(global) {
 
 					oauth.fetchAccessToken(function(data) {
 						//            var returnedParams = oauth.parseTokenRequest(data.text);
+						Ti.App.Properties.setString(PROP_ACCESSTOKEN_KEY, oauth.getAccessTokenKey());
+      					Ti.App.Properties.setString(PROP_ACCESSTOKENSECRET_KEY, oauth.getAccessTokenSecret());
 						self.fireEvent('login', {
 							success : true,
 							error : false,
@@ -219,6 +223,8 @@ exports.Twitter = (function(global) {
 			// Not totally sure if the timeout should be greater than 1. It
 			// seems to do the trick on iOS/Android.
 			setTimeout(function() {
+				Ti.App.Properties.setString(PROP_ACCESSTOKEN_KEY, self.accessTokenKey);
+				Ti.App.Properties.setString(PROP_ACCESSTOKENSECRET_KEY, self.accessTokenSecret);
 				self.fireEvent('login', {
 					success : true,
 					error : false,
@@ -288,12 +294,19 @@ exports.Twitter = (function(global) {
 		this.accessTokenKey = null;
 		this.accessTokenSecret = null;
 		this.authorized = false;
+		
+		// Remove the Properties.
+		Ti.App.Properties.removeProperty(PROP_ACCESSTOKEN_KEY);
+		Ti.App.Properties.removeProperty(PROP_ACCESSTOKENSECRET_KEY);
+		
 
 		callback();
 	};
 	
 	Twitter.prototype.isAuthorized = function() {
-		
+		Ti.API.debug(Ti.App.Properties.getString(PROP_ACCESSTOKEN_KEY, ''));
+		Ti.API.debug(Ti.App.Properties.getString(PROP_ACCESSTOKENSECRET_KEY, ''));
+
 		return this.authorized;
 	};
 
