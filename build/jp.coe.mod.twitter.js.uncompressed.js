@@ -66,8 +66,8 @@ exports.Twitter = (function(global) {
 		self.consumerKey = options.consumerKey;
 		self.consumerSecret = options.consumerSecret;
 		self.authorizeUrl = "https://api.twitter.com/oauth/authorize";
-		self.accessTokenKey = options.accessTokenKey = Ti.App.Properties.getString(PROP_ACCESSTOKEN_KEY, '');
-		self.accessTokenSecret = options.accessTokenSecret = Ti.App.Properties.getString(PROP_ACCESSTOKENSECRET_KEY, '');
+		self.accessTokenKey = options.accessTokenKey;
+		self.accessTokenSecret = options.accessTokenSecret;
 		self.authorized = false;
 		self.listeners = {};
 
@@ -148,7 +148,9 @@ exports.Twitter = (function(global) {
 
 		webView.addEventListener('load', function(event) {
 			// If we're not on the Twitter authorize page
+			console.log("twittermod load");
 			if (event.url.indexOf(self.authorizeUrl) === -1) {
+				console.log("twittermod load1");
 				webViewWindow.remove(loadingOverlay);
 				actInd.hide();
 				// Required for Android
@@ -158,6 +160,7 @@ exports.Twitter = (function(global) {
 					webViewWindow.leftNavButton = backButton;
 				}
 			} else {
+				console.log("twittermod load2");
 				// Switch out back button for close button
 				if (webViewWindow.leftNavButton !== closeButton) {
 					webViewWindow.leftNavButton = closeButton;
@@ -165,8 +168,9 @@ exports.Twitter = (function(global) {
 
 				// Grab the PIN code out of the DOM
 				var pin = event.source.evalJS("document.getElementById('oauth_pin').getElementsByTagName('code')[0].innerText");
-
+				console.log("twittermod pin:"+pin);
 				if (!pin) {
+					console.log("twittermod load21");
 					// We're here when:
 					// - "No thanks" button clicked
 					// - Bad username/password
@@ -174,6 +178,7 @@ exports.Twitter = (function(global) {
 					webViewWindow.remove(loadingOverlay);
 					actInd.hide();
 				} else {
+					console.log("twittermod load22");
 					if (!isAndroid) {// on iOS we can close the modal window right away
 						if (navWin != null) navWin.close();
 						webViewWindow.close();
@@ -182,9 +187,8 @@ exports.Twitter = (function(global) {
 					oauth.accessTokenUrl = "https://api.twitter.com/oauth/access_token?oauth_verifier=" + pin;
 
 					oauth.fetchAccessToken(function(data) {
+						console.log("twittermod load3");
 						//            var returnedParams = oauth.parseTokenRequest(data.text);
-						Ti.App.Properties.setString(PROP_ACCESSTOKEN_KEY, oauth.getAccessTokenKey());
-      					Ti.App.Properties.setString(PROP_ACCESSTOKENSECRET_KEY, oauth.getAccessTokenSecret());
 						self.fireEvent('login', {
 							success : true,
 							error : false,
@@ -197,6 +201,7 @@ exports.Twitter = (function(global) {
 							webViewWindow.close();
 						}
 					}, function(data) {
+						console.log("twittermod load4");
 						self.fireEvent('login', {
 							success : false,
 							error : "Failure to fetch access token, please try again.",
@@ -223,8 +228,6 @@ exports.Twitter = (function(global) {
 			// Not totally sure if the timeout should be greater than 1. It
 			// seems to do the trick on iOS/Android.
 			setTimeout(function() {
-				Ti.App.Properties.setString(PROP_ACCESSTOKEN_KEY, self.accessTokenKey);
-				Ti.App.Properties.setString(PROP_ACCESSTOKENSECRET_KEY, self.accessTokenSecret);
 				self.fireEvent('login', {
 					success : true,
 					error : false,
@@ -294,18 +297,13 @@ exports.Twitter = (function(global) {
 		this.accessTokenKey = null;
 		this.accessTokenSecret = null;
 		this.authorized = false;
-		
-		// Remove the Properties.
-		Ti.App.Properties.removeProperty(PROP_ACCESSTOKEN_KEY);
-		Ti.App.Properties.removeProperty(PROP_ACCESSTOKENSECRET_KEY);
+
 		
 
 		callback();
 	};
 	
 	Twitter.prototype.isAuthorized = function() {
-		Ti.API.debug(Ti.App.Properties.getString(PROP_ACCESSTOKEN_KEY, ''));
-		Ti.API.debug(Ti.App.Properties.getString(PROP_ACCESSTOKENSECRET_KEY, ''));
 
 		return this.authorized;
 	};
