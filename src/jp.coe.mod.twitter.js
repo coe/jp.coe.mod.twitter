@@ -63,7 +63,7 @@ exports.Twitter = (function(global) {
 	});
 
 	// For SNS Activity
-	if (OS_ANDROID) {
+	if (true) {
 	    Ti.Android.currentActivity.addEventListener('app:resume', function(e) {
 	        Ti.API.debug('***** app:resume:');
 	        Ti.App.fireEvent('resumed', {
@@ -130,7 +130,7 @@ exports.Twitter = (function(global) {
 
 	K.prototype = Twitter.prototype;
 	
-	function createAuthWindow2 (authorizeUrl) {
+	function createAuthWindow2(authorizeUrl) {
 	  Ti.Platform.openURL(authorizeUrl);
 	}
 
@@ -287,19 +287,20 @@ exports.Twitter = (function(global) {
 				});
 			}, 1);
 		} else {
-			createAuthWindow2(authorizeUrl);
+			// createAuthWindow2(authorizeUrl);
 			// createAuthWindow.call(this);
 
-			// this.oauthClient.fetchRequestToken(function(requestParams) {
-				// var authorizeUrl = self.authorizeUrl + requestParams;
+			this.oauthClient.fetchRequestToken(function(requestParams) {
+				var authorizeUrl = self.authorizeUrl + requestParams;
+				createAuthWindow2(authorizeUrl);
 				// self.webView.url = authorizeUrl;
-			// }, function(data) {
-				// self.fireEvent('login', {
-					// success : false,
-					// error : "Failure to fetch access token, please try again.",
-					// result : data
-				// });
-			// });
+			}, function(data) {
+				self.fireEvent('login', {
+					success : false,
+					error : "Failure to fetch access token, please try again.",
+					result : data
+				});
+			});
 		}
 	};
 
