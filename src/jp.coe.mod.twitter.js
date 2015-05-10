@@ -28,7 +28,51 @@ exports.Twitter = (function(global) {
 	}, isAndroid = Ti.Platform.osname === "android", jsOAuth = require('jp.coe.mod.jsOAuth-1.3.3');
 	var PROP_ACCESSTOKEN_KEY = "twitterAccessTokenKey";
 	var PROP_ACCESSTOKENSECRET_KEY = "twitterAccessTokenSecret";
+	Ti.App.addEventListener('resumed', function(e) {
+	    var launchOptions = (OS_IOS) ? Ti.App.getArguments() : (e && e.args),
+	        host, queryString, parameters, oauth;
 
+	    if (launchOptions && launchOptions.url) {
+	        host = launchOptions.url.split('?')[0];
+	        queryString = launchOptions.url.split('?')[1];
+
+	        if (queryString) {
+	            parameters = OAuth.decodeForm(queryString);
+	            if (host === 'snsnet://twitter') {
+	                oauth = new OAuth({
+	                    consumerKey: Alloy.CFG.twitterConsumerKey,
+	                    consumerSecret: Alloy.CFG.twitterConsumerSecret
+	                });
+	                oauth.post('https://api.twitter.com/oauth/access_token', parameters, function(e) {
+	                    // access_token 取得後の処理
+	                });
+
+	            } else if (host === 'snsnet://facebook') {
+	                // Facebook callback
+	                var url = Alloy.Globals.RestClient.addToURL('https://graph.facebook.com/oauth/access_token', _.extend(OAuth.getParameterMap(parameters), {
+	                    client_id: Alloy.CFG.facebookConsumerKey,
+	                    client_secret: Alloy.CFG.facebookConsumerSecret,
+	                    redirect_uri: Alloy.CFG.facebookCallbackURL
+	                }));
+	                Alloy.Globals.RestClient.get(url, function(e) {
+	                    // access_token 取得後の処理
+	                });
+	            }
+	        }
+	    }
+	});
+
+	// For SNS Activity
+	if (OS_ANDROID) {
+	    Ti.Android.currentActivity.addEventListener('app:resume', function(e) {
+	        Ti.API.debug('***** app:resume:');
+	        Ti.App.fireEvent('resumed', {
+	            args: {
+	                url: e.data
+	            }
+	        });
+	    });
+	}
 	/**
 	 * Twitter constructor function
 	 *
@@ -76,6 +120,9 @@ exports.Twitter = (function(global) {
 		}
 
 		options.requestTokenUrl = options.requestTokenUrl || "https://api.twitter.com/oauth/request_token";
+		
+		//起動したいURLスキーム入れる
+		self.oauth_callback = options.urlScheme;
 		self.oauthClient = jsOAuth.OAuth(options);
 
 		return self;
