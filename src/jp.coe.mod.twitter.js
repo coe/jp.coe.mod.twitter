@@ -63,7 +63,7 @@ exports.Twitter = (function(global) {
 	});
 
 	// For SNS Activity
-	if (true) {
+	if (isAndroid) {
 	    Ti.Android.currentActivity.addEventListener('app:resume', function(e) {
 	        Ti.API.debug('***** app:resume:');
 	        Ti.App.fireEvent('resumed', {
@@ -122,7 +122,8 @@ exports.Twitter = (function(global) {
 		options.requestTokenUrl = options.requestTokenUrl || "https://api.twitter.com/oauth/request_token";
 		
 		//起動したいURLスキーム入れる
-		self.oauth_callback = options.urlScheme;
+		console.log(" options.callbackUrl:"+ options.callbackUrl);
+		//options.oauth_callback = options.urlScheme;
 		self.oauthClient = jsOAuth.OAuth(options);
 
 		return self;
